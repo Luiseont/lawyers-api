@@ -20,9 +20,12 @@ Route::middleware('auth:api')->group(function () {
 
     //rutas para abogados
     Route::middleware('lawyerAccess')->group(function(){
-        Route::get('hola', function(){
-            return 'hola';
-        });
+
+        Route::post('suscription', [App\Http\Controllers\API\LawyersController::class, 'store']);
+        Route::get('suscription/{id}', [App\Http\Controllers\API\LawyersController::class, 'show']);
+        Route::put('suscription', [App\Http\Controllers\API\LawyersController::class, 'update']);
+        Route::delete('suscription/{id}', [App\Http\Controllers\API\LawyersController::class, 'destroy']);
+
     });
 
     //rutas para administradores

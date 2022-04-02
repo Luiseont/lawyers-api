@@ -23,6 +23,7 @@ class CreateSuscriptionsTable extends Migration
             $table->date('attemp_date')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('type_id')->references('id')->on('suscription_types');
