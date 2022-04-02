@@ -14,6 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', [App\Http\Controllers\API\AuthController::class, 'login']);
+
+Route::middleware('auth:api')->group(function () {
+
+    //rutas para abogados
+    Route::middleware('lawyerAccess')->group(function(){
+        Route::get('hola', function(){
+            return 'hola';
+        });
+    });
+
+    //rutas para administradores
+    Route::middleware('adminAccess')->group(function(){
+        Route::get('holaAdmin', function(){
+            return 'hola';
+        });
+    });
+
+
 });
