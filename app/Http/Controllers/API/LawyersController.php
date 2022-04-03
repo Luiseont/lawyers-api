@@ -41,8 +41,7 @@ class LawyersController extends Controller
             {
 
                 //agregamos esta suscripcion a la cola para intentar el pago en 30minutos
-
-                ProcessPayments::dispatch($suscription->id)->onQueue('daily')->delay(now()->addMinutes(1));
+                ProcessPayments::dispatch($suscription->id)->onQueue('process')->delay(now()->addMinutes(30));
 
                 return response()->Json(['status' => 'ok', 'message' => 'Suscription created successfuly'], 200);
             }else{

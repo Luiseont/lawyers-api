@@ -27,12 +27,13 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('suscription/{id}', [App\Http\Controllers\API\LawyersController::class, 'destroy']);
 
     });
-
+    
     //rutas para administradores
     Route::middleware('adminAccess')->group(function(){
-        Route::get('holaAdmin', function(){
-            return 'hola';
-        });
+        Route::get('getsuscriptions/{flag}', [App\Http\Controllers\API\AdminController::class, 'getSuscriptions']);
+        Route::get('getsuscription/{id}', [App\Http\Controllers\API\AdminController::class, 'getSuscription']);
+        Route::post('cancelSuscription', [App\Http\Controllers\API\AdminController::class, 'cancelSuscription']);
+        Route::post('retryPayment', [App\Http\Controllers\API\AdminController::class, 'retryPaymentManual']);
     });
 
 
