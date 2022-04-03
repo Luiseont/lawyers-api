@@ -17,7 +17,7 @@ class Suscription extends Model
 
     public function client()
     {
-        return $this->BelongsTo(User::class, 'id', 'user_id');
+        return $this->BelongsTo(User::class, 'user_id', 'id');
     }
 
     public function payments()

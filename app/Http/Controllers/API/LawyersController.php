@@ -10,6 +10,7 @@ use App\Http\Requests\API\StoreSuscriptionRequest;
 use App\Http\Requests\API\UpdateSuscriptionRequest;
 
 use App\Models\Suscription;
+use App\Jobs\ProcessPayments;
 
 class LawyersController extends Controller
 {
@@ -39,9 +40,10 @@ class LawyersController extends Controller
             if($suscription)
             {
 
-            /*
-            * aca vamos a agregar la nueva suscripcion a los jobs para realizar el cobro de los pagos.
-            */
+                //agregamos esta suscripcion a la cola para intentar el pago en 30minutos
+
+                ProcessPayments::dispatch($suscription->id)->onQueue('process')->delay(now()->addMinutes(1));
+
                 return response()->Json(['status' => 'ok', 'message' => 'Suscription created successfuly'], 200);
             }else{
                 return response()->Json(['status' => 'ko', 'message' => 'Error creating a suscription'], 400);

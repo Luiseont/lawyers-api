@@ -18,6 +18,15 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        \App\Events\PaymentSuccessEvent::class =>[
+            \App\Listeners\SendMailSuccess::class
+        ],
+        \App\Events\PaymentFailEvent::class =>[
+            \App\Listeners\SendFailSuccess::class
+        ],
+        \App\Events\UnsubscribeEvent::class =>[
+            \App\Listeners\SendUnsubscribeMail::class
+        ]
     ];
 
     /**

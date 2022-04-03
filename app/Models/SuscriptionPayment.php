@@ -10,7 +10,7 @@ class SuscriptionPayment extends Model
     use HasFactory;
 
     protected $table = "suscription_payments";
-    protected $fillable = [];
+    protected $fillable = ['suscription_id', 'amount', 'response'];
 
 
     public function suscription()
