@@ -43,7 +43,7 @@ class ProcessDayliPayments implements ShouldQueue
     {
         $suscription = Suscription::with('client')->where('id', $this->suscription)->first();
 
-            if(random_int(0, 100) > 100)
+            if(random_int(0, 100) > 50)
             {
                 //registro el pago.
                 $payment = SuscriptionPayment::create([
@@ -75,22 +75,18 @@ class ProcessDayliPayments implements ShouldQueue
                 if($this->attempts() == 2){
                     $suscription->active = 0;
                     $suscription->save();
-
                     UnsubscribeEvent::dispatch($suscription);
+                    //excepcion 
+                    $this->fail();
                 }else{
                     $suscription->save();
                     PaymentFailEvent::dispatch($suscription);
-                    $this->release(60);
+                    //envia el job de nuevo a cola por 24h
+                    $this->release(60*60*24);
                 }
                 
             }
 
     }
 
-    public function retryUntil()
-    {   
-        //return now()->addDays(1);
-
-        return now()->addMinutes(1);
-    }   
 }

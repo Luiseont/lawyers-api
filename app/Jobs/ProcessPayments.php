@@ -23,14 +23,16 @@ class ProcessPayments implements ShouldQueue
     public $tries = 1;
 
     private $suscription;
+    private $now;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(int $susId)
+    public function __construct(int $susId, bool $manual = false)
     {
         $this->suscription = $susId;
+        $this->now = $manual;
     }
 
     /**
@@ -42,7 +44,7 @@ class ProcessPayments implements ShouldQueue
     {
         $suscription = Suscription::with('client')->where('id', $this->suscription)->first();
 
-        if(random_int(0, 100) > 100)
+        if(random_int(0, 100) > 50)
         {
             //registro el pago.
             $payment = SuscriptionPayment::create([
@@ -70,8 +72,14 @@ class ProcessPayments implements ShouldQueue
             $suscription->save();
 
             //ejecuta el evento de fallo.
-            PaymentFailEvent::dispatch($suscription);
-            ProcessDayliPayments::dispatch($suscription->id)->onQueue('daily')->delay(now()->addMinutes(1));
+            if(!$this->now)
+            {            
+                PaymentFailEvent::dispatch($suscription);
+                //manda a la cola daily para que se procese de nuevo en 24h
+                ProcessDayliPayments::dispatch($suscription->id)->onQueue('daily')->delay(now()->addHours(24));
+
+            }
+
         }
 
     }
