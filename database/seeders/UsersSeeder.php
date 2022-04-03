@@ -17,12 +17,14 @@ class UsersSeeder extends Seeder
     {
         $users = [
             ['name' => 'Admin','email'=> 'Admin@admin.com','password'=> Hash::make('administrator'),'role' => 'Admin'],
-            ['name' => 'Lawyer','email'=> 'Lawyer@admin.com','password'=> Hash::make('lawyer'),'role' => 'lawyer']
+            ['name' => 'Lawyer','email'=> 'Lawyer@admin.com','password'=> Hash::make('lawyer'),'role' => 'lawyer'],
+            ['name' => 'Lawyer2','email'=> 'Lawyer2@admin.com','password'=> Hash::make('lawyer'),'role' => 'lawyer'],
+            ['name' => 'Lawyer3','email'=> 'Lawyer3@admin.com','password'=> Hash::make('lawyer'),'role' => 'lawyer']
         ];
 
         foreach($users as $user)
         {
-            User::updateOrCreate(['name' => $user['name'],'email'=> $user['email'],'password'=> $user['password'],'role' => $user['role']]);
+            User::updateOrCreate($user);
         }
     }
 }
