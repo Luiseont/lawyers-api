@@ -1,64 +1,142 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Lawyers API
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Prueba tecnica para puestro de desarrollador backend para Nexoabogados
 
-## About Laravel
+## Instalacion
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Inicialmente
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-[Clonar repositorio]
+-[Ejecutar Composer install]
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Ejecutar en consola los siguientes comandos.
 
-## Learning Laravel
+-[php artisan migrate]
+-[php artisan db:seed]
+-[php artisan passport:install]
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Para iniciar las Queue debe ejecutar el worker de Laravel con el siguiente comando.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-[php artisan queue:work --queue=process,dialy]
 
-## Laravel Sponsors
+## Consideraciones
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Utiliza Laravel Queue para manejar las "Suscripciones" entrantes y posterior proceso de pago.
+Segun las indicaciones los pagos se deben procesar 30 minutos luego de recibida.. Esto se lleva a cabo en el Job [ProcessPayments] utilizando la queue [Process].
 
-### Premium Partners
+En caso de pago erroneo, el sistema agrega la suscripcion a la cola [dialy] manejado por el Job [ProcessDayliPayments] el cual se encargara de reintentar el proceso cada 24 horas hasta un segundo intento, si el pago no es exitoso en ninguno de los intentos la suscripcion se marcara como inactiva.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Se envian notificaciones por [email] en cada caso.
 
-## Contributing
+## Autenticacion
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Los [seeders] contienen informacion de usuarios para el inicio de sesion.
+Para acciones de administracion utilizar el usuario
 
-## Code of Conduct
+User: Admin@admin.com
+pwd:  administrator
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Para acciones de lawyer utilizar los usuario
+-----------------------
+User: Lawyer@admin.com
+pwd:  lawyer
+-----------------------
+User: Lawyer2@admin.com
+pwd:  lawyer
+-----------------------
+User: Lawyer3@admin.com
+pwd:  lawyer
 
-## Security Vulnerabilities
+## uso
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Al realizar el proceso de autenticacion y este resulte exitoso recibira un token.
+Dicho token debera ser enviado en las cabeceras de las peticiones utilizando la clave [Authorization] con el valor [Bearer {token}]
+ademas la peticion debe enviarse con la clave [Accept] cuyo valor debe ser [application/json]
 
-## License
+## Endpoints
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Segun las instrucciones los endpoints requeridos son los siguiente:
+
+## POST /login
+
+Inicio de sesion en el sistema.
+
+**Parameters**
+|Nombre     | Required |  Tipo    | Descripcion  
+|`email`    | required | String   | Correo del usuario
+|`password` | required | String   | clave de acceso.
+
+-[Lawyers]
+
+## POST /suscription
+
+Registra una nueva suscripcion
+
+**Parameters**
+|Nombre    | Required |  Tipo     | Descripcion  
+|`type`    | required | Numeric   | Tipo de suscripcion a crear. existen 3 tipos [Semanal, Mensual, Anual]
+|`amount`  | required | Numeric   | Monto de la nueva suscripcion.
+
+
+## GET /suscription/{id}
+
+Retorna la informacion de una suscripcion.
+
+**Parameters**
+|Nombre    | Required |  Tipo     | Descripcion  
+|`id`      | required | Numeric   | ID de la suscripcion a visualizar.
+
+## PUT /suscription
+
+Actualiza la suscripcion del usuario.
+
+**Parameters**
+|Nombre        | Required |  Tipo     | Descripcion  
+|`suscription` | required | Numeric   | ID de la suscripcion a actualizar.
+|`type`        | required | Numeric   | Nuevo tipo de suscripcion.
+|`amount`      | opcional | Numeric   | Nuevo monto de la suscripcion
+
+## DELETE /suscription/{id}
+
+Elimina la suscripcion actual del usuario.
+
+**Parameters**
+|Nombre    | Required |  Tipo     | Descripcion  
+|`id`      | required | Numeric   | ID de la suscripcion a eliminar.
+
+
+-[Admin]
+
+## GET /getsuscriptions/{criterio}
+
+Retorna todas las suscripciones que coincidan con el criterio
+
+**Parameters**
+|Nombre    | Required |  Tipo     | Descripcion  
+|`criterio`| required | String    | Criterio de busqueda. [activo] o [inactivo]
+
+## GET /getsuscription/{id}
+
+Retorna la informacion de una suscripcion.
+
+**Parameters**
+|Nombre    | Required |  Tipo     | Descripcion  
+|`id`      | required | Numeric   | ID de la suscripcion a visualizar.suscription
+
+## POST /cancelSuscription
+
+Cancela una suscripcion arbitrariamente.
+
+**Parameters**
+|Nombre         | Required |  Tipo     | Descripcion  
+|`suscription`  | required | Numeric   | ID de la suscripcion a cancelar.
+
+## POST /retryPayment
+
+Reintenta un pago de una suscripcion inactiva.
+Si es satisfactorio, reactiva la suscripcion.
+
+**Parameters**
+|Nombre         | Required |  Tipo     | Descripcion  
+|`suscription`  | required | Numeric   | ID de la suscripcion.
+
