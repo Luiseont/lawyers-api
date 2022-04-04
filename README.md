@@ -6,18 +6,18 @@ Prueba tecnica para puestro de desarrollador backend para Nexoabogados
 
 Inicialmente
 
--[Clonar repositorio]
--[Ejecutar Composer install]
+* [Clonar repositorio]
+* [Ejecutar Composer install]
 
 Ejecutar en consola los siguientes comandos.
 
--[php artisan migrate]
--[php artisan db:seed]
--[php artisan passport:install]
+* [php artisan migrate]
+* [php artisan db:seed]
+* [php artisan passport:install]
 
 Para iniciar las Queue debe ejecutar el worker de Laravel con el siguiente comando.
 
--[php artisan queue:work --queue=process,dialy]
+* [php artisan queue:work --queue=process,dialy]
 
 ## Consideraciones
 
@@ -37,13 +37,13 @@ User: Admin@admin.com
 pwd:  administrator
 
 Para acciones de lawyer utilizar los usuario
------------------------
+
 User: Lawyer@admin.com
 pwd:  lawyer
------------------------
+
 User: Lawyer2@admin.com
 pwd:  lawyer
------------------------
+
 User: Lawyer3@admin.com
 pwd:  lawyer
 
